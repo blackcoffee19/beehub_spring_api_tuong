@@ -63,16 +63,16 @@ public class DatabaseSeeder {
 		this.reportTypeRep = reportTypeRep;
 		this.postRep = postRep;
 	}
-//	@EventListener
-//	public void seed(ContextRefreshedEvent event) {
-//        seederRole();
-//        seederUser();
-//        seederGroup();
-//        seederGroupMember();
-//        seederRelationshipUser();
-//        seederReportType();
-//        seederPosts();
-//    }
+	@EventListener
+	public void seed(ContextRefreshedEvent event) {
+        seederRole();
+        seederUser();
+        seederGroup();
+        seederGroupMember();
+        seederRelationshipUser();
+        seederReportType();
+        seederPosts();
+    }
 	private void seederRole() {
 		 List<Role> roles = roleRep.findAll();
 		 if(roles.isEmpty()) {
