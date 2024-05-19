@@ -36,4 +36,8 @@ public class UserController {
 	private List<PostDto> getPosts(@PathVariable Long id){
 		return postService.findByUserId(id);
 	}
+	@GetMapping(path = "/friendposts/{id}")
+	private List<PostDto> getFriendPost(@PathVariable Long id){
+		return postService.newestPostsForUser(id);
+	}
 }

@@ -15,15 +15,28 @@ import vn.aptech.demo.service.impl.IPostService;
 public class PostService implements IPostService {
 	@Autowired
 	private PostRepository postRep;
-	@Autowired 
-	private ModelMapper mapper;
-	private PostDto toDto(Post post) {
-		return mapper.map(post, PostDto.class);
-	}
+	
 	@Override
 	public List<PostDto> findByUserId(Long id) {
 		List<PostDto> listPost = new LinkedList<PostDto>();
-		postRep.findByUserId(id).forEach((post)->listPost.add(toDto(post)));
+		postRep.findByUserId(id).forEach((post)->
+						listPost.add(
+								new PostDto(
+										post.getId(), 
+										post.getText(), 
+										post.getMedia(), 
+										post.getUser().getId(),
+										post.getGroup()!=null? post.getGroup().getId(): null, 
+												post.getCreate_at())));
+		return listPost;
+	}
+	@Override
+	public List<PostDto> newestPostsForUser(Long id) {
+		List<PostDto> listPost = new LinkedList<PostDto>();
+		postRep.newestPostFromFriend(id).forEach((post)->{
+			System.out.println(post);
+			listPost.add( new PostDto(post.getId(), post.getText(), post.getMedia(), post.getUser().getId(),post.getGroup()!=null? post.getGroup().getId(): null, post.getCreate_at()));
+		});
 		return listPost;
 	}
 
