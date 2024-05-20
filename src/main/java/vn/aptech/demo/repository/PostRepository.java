@@ -15,8 +15,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			  + " where p.user_id = ?1"
 			  , nativeQuery = true)
 	List<Post> findByUserId( Long id);
-	@Query(value = "SELECT DISTINCT p.id, p.text, p. media, p.user_id, p.group_id, p.create_at FROM posts p "
+	@Query(value = "SELECT DISTINCT p.* FROM posts p "
 			+ " LEFT JOIN relationship_users  ru ON ru.user1_id = p.user_id OR ru.user2_id=p.user_id"
+			+ " LEFT JOIN users u ON p.user_id = u.id"
+			+ " LEFT JOIN groups g ON g.id = p.group_id"
 			+ " WHERE (ru.user1_id = ?1 OR ru.user2_id= ?1) AND p.user_id <> ?1 AND ru.type!='BLOCKED'", nativeQuery = true)
 	List<Post> newestPostFromFriend(Long id);
 }

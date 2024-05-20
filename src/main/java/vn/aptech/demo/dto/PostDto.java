@@ -1,6 +1,8 @@
 package vn.aptech.demo.dto;
 
 import java.time.LocalDateTime;
+
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +15,16 @@ public class PostDto {
 	private String text;
 	private String media;
 	private Long user_id;
+	@Nullable
 	private Long group_id;
 	private LocalDateTime create_at;
+	private String user_fullname;
+	@Nullable
+	private String groupName;
+	@Nullable
+	private boolean is_public_group;
+	@Nullable
+	private String image_group;
 	public PostDto(
 			String text,
 			Long user_id,

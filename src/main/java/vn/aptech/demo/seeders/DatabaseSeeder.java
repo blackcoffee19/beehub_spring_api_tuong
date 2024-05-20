@@ -63,16 +63,16 @@ public class DatabaseSeeder {
 		this.reportTypeRep = reportTypeRep;
 		this.postRep = postRep;
 	}
-	@EventListener
-	public void seed(ContextRefreshedEvent event) {
-        seederRole();
-        seederUser();
-        seederGroup();
-        seederGroupMember();
-        seederRelationshipUser();
-        seederReportType();
-        seederPosts();
-    }
+//	@EventListener
+//	public void seed(ContextRefreshedEvent event) {
+//        seederRole();
+//        seederUser();
+//        seederGroup();
+//        seederGroupMember();
+//        seederRelationshipUser();
+//        seederReportType();
+//        seederPosts();
+//    }
 	private void seederRole() {
 		 List<Role> roles = roleRep.findAll();
 		 if(roles.isEmpty()) {
@@ -110,7 +110,8 @@ public class DatabaseSeeder {
 		if(groups.isEmpty()) {
 			for(int i =0; i<5;i++) {
 	        	Group group= new Group("Group "+i,"Description of Group "+i);
-	        	logger.info(group.toString());
+	        	group.setActive(true);
+	        	group.setPublic_group(i%2==0);
 	        	groupRep.save(group);
 	        	logger.info("Group "+i+" saved");
 	        }

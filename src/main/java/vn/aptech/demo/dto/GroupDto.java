@@ -15,7 +15,10 @@ public class GroupDto {
 	private String groupname;
 	private String description;
 	private boolean is_active;
+	private boolean is_public;
 	private LocalDateTime created_at;
+	private String image_group;
+	private String background_group;
 	public GroupDto(
 			String groupname,
 			String description	

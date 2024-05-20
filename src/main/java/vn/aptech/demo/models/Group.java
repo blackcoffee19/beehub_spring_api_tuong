@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,14 +35,18 @@ public class Group {
     @Size(max = 50)
     private String groupname;
 	@Value("${some.key:true}")
-	private boolean is_public;
+	private boolean public_group;
 	
 	@Size(max = 250,min = 0)
 	private String description;
 	@Value("${some.key:true}")
-	private boolean is_active;
+	private boolean active;
 	@NotNull
     private LocalDateTime created_at;
+	@Nullable
+	private String image_group;
+	@Nullable
+	private String background_group;
 	
 	@OneToMany(mappedBy = "group_receiver", cascade = CascadeType.ALL)
 	private List<Requirement> requirements;
