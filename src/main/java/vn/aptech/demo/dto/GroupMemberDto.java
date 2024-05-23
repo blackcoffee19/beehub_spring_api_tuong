@@ -11,7 +11,9 @@ public class GroupMemberDto {
 	private int id;
 	private Long user_id;
 	private Long group_id;
-	
+	private String group_name;
+	private String group_image;
+	private boolean joined;
 	private String role;
 	public GroupMemberDto(
 			Long user_id,

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class GalleryDto {
 	private Integer id;
 	private Long user_id;
+	private Long post_id;
 	private String media;
 	private String media_type;
 	public GalleryDto(

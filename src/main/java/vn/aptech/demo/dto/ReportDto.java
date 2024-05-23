@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class ReportDto {
 	private Integer id;
 	private Long sender_id;
-	private Long receiver_id;
-	private Long group_id;
-	private Long post_id;
+	private Long target_user_id;
+	private Long target_group_id;
+	private Long target_post_id;
 	private Integer type_id;
 	private String add_description;
 	private LocalDateTime create_at;

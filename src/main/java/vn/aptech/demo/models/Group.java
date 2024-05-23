@@ -12,7 +12,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,10 +45,16 @@ public class Group {
 	private boolean active;
 	@NotNull
     private LocalDateTime created_at;
+	
 	@Nullable
-	private String image_group;
+    @OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="image_id",referencedColumnName = "id")
+	private GroupMedia image_group;
+	
 	@Nullable
-	private String background_group;
+    @OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="background_id",referencedColumnName = "id")
+	private GroupMedia background_group;
 	
 	@OneToMany(mappedBy = "group_receiver", cascade = CascadeType.ALL)
 	private List<Requirement> requirements;
@@ -56,6 +64,9 @@ public class Group {
 	
 	@OneToMany(mappedBy = "group",cascade =  CascadeType.ALL)
 	private List<Post> posts;
+	
+	@OneToMany(mappedBy = "target_group",cascade =  CascadeType.ALL)
+	private List<Report> reports_of_group;
 	
 	public Group(
 			String groupname,

@@ -13,12 +13,14 @@ import lombok.NoArgsConstructor;
 public class GroupDto {
 	private Long id;
 	private String groupname;
+	private boolean public_group;
 	private String description;
-	private boolean is_active;
-	private boolean is_public;
+	private boolean active;
 	private LocalDateTime created_at;
 	private String image_group;
 	private String background_group;
+	private boolean joined;
+	private int member_count;
 	public GroupDto(
 			String groupname,
 			String description	
@@ -26,5 +28,22 @@ public class GroupDto {
 		this.groupname = groupname;
 		this.description = description;
 		this.created_at = LocalDateTime.now();
+	}
+	public GroupDto(
+			String groupname,
+			String description,
+			String image_group,
+			LocalDateTime create_at,
+			boolean public_group,
+			boolean joined
+			){
+		this.groupname = groupname;
+		this.description = description;
+		this.image_group = image_group;
+		this.created_at = create_at;
+		this.public_group = public_group;
+		this.joined = joined;
+		
+
 	}
 }

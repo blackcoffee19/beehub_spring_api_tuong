@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
@@ -64,7 +65,13 @@ public class User {
     private String gender;
     
     @Nullable
-    private String image;
+    @OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="image_id",referencedColumnName = "id")
+    private Gallery image;
+    @Nullable
+    @OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="background_id",referencedColumnName = "id")
+    private Gallery background;
     
     @Nullable
     private String bio;
@@ -97,23 +104,29 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<GroupMember> group_joined;
     
-    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Requirement> requirements;
     
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Requirement> sent_requirement;
-    
-    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL)
-    private List<RelationshipUsers> relationships;
-    
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Gallery> galleries;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Post> posts;
+    
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Report> reports_from_user;
+    
+    @OneToMany(mappedBy = "target_user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Report> reports_to_user;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<UserSetting> user_settings;
     
     public User(String username, 
     		String email, 
@@ -134,6 +147,6 @@ public class User {
     }
     @Override
     public String toString() {
-    	return "User "+this.fullname+"\tusername:"+this.username+"\tgender: "+this.gender+"\tphone: "+this.phone+"\ncreate at: "+this.create_at+"\tis active: "+this.is_active+"\temail: "+this.email+"\temail_verified"+this.email_verified;
+    	return "User "+this.id+"\tFullname: "+this.fullname+"\tusername:"+this.username+"\tgender: "+this.gender+"\tphone: "+this.phone+"\ncreate at: "+this.create_at+"\tis active: "+this.is_active+"\temail: "+this.email+"\temail_verified"+this.email_verified;
     }
 }

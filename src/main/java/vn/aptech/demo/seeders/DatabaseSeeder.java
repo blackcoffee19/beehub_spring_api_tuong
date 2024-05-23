@@ -2,6 +2,7 @@ package vn.aptech.demo.seeders;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import vn.aptech.demo.models.EGroupRole;
 import vn.aptech.demo.models.ERelationshipType;
 import vn.aptech.demo.models.ERole;
+import vn.aptech.demo.models.ESettingType;
 import vn.aptech.demo.models.Group;
 import vn.aptech.demo.models.GroupMember;
 import vn.aptech.demo.models.Post;
@@ -63,16 +65,16 @@ public class DatabaseSeeder {
 		this.reportTypeRep = reportTypeRep;
 		this.postRep = postRep;
 	}
-//	@EventListener
-//	public void seed(ContextRefreshedEvent event) {
-//        seederRole();
-//        seederUser();
-//        seederGroup();
-//        seederGroupMember();
-//        seederRelationshipUser();
-//        seederReportType();
-//        seederPosts();
-//    }
+	@EventListener
+	public void seed(ContextRefreshedEvent event) {
+        seederRole();
+        seederUser();
+        seederGroup();
+        seederGroupMember();
+        seederRelationshipUser();
+        seederReportType();
+        seederPosts();
+    }
 	private void seederRole() {
 		 List<Role> roles = roleRep.findAll();
 		 if(roles.isEmpty()) {
@@ -91,12 +93,13 @@ public class DatabaseSeeder {
 		List<User> users = userRep.findAll();
 		if(users.isEmpty()) {
 			Role userRole = roleRep.findByName(ERole.ROLE_USER).get();
-	        for(int i =0; i<5;i++) {
-	        	String gernateGen= i%2==0?"female":"name";
+	        for(int i =1; i<=5;i++) {
+	        	String gernateGen= i%2==0?"female":"male";
 	        	User user= new User("user"+i, "user"+i+"@gmail.com",passwordEncoder.encode("a123456"), "User "+i,gernateGen, "091923453"+i, LocalDateTime.now(), LocalDateTime.now());
 	        	HashSet<Role> user1roles = new HashSet<Role>();
 	        	user1roles.add(userRole);
 	        	user.setRoles(user1roles);
+	        	user.set_active(true);
 	        	logger.info(user.toString());
 	        	userRep.save(user);
 	        	logger.info("User "+i+" saved");
@@ -108,7 +111,7 @@ public class DatabaseSeeder {
 	private void seederGroup() {
 		List<Group> groups = groupRep.findAll();
 		if(groups.isEmpty()) {
-			for(int i =0; i<5;i++) {
+			for(int i =1; i<=5;i++) {
 	        	Group group= new Group("Group "+i,"Description of Group "+i);
 	        	group.setActive(true);
 	        	group.setPublic_group(i%2==0);
@@ -137,21 +140,27 @@ public class DatabaseSeeder {
 					creator.setRole(EGroupRole.GROUP_CREATOR);
 					memRep.save(creator);
 					logger.info("Group "+group.getId()+" creator userid: "+user.getUsername()+" saved");
-					for(int i = 0; i<= ran1; i++) {
+					int numberF = ran1==users.size()?ran1-1:ran1;
+					List<Integer> listRan = new LinkedList<Integer>();
+					listRan.add(ran1);
+					for(int i = 0; i<= numberF; i++) {
 						GroupMember member = new GroupMember();
 						member.setGroup(group);
 						int ran2 = (int) Math.round(Math.random()*users.size());
-						ran2 = ran2>=0 && ran2<5? ran2: ran2-1;
-//						logger.info("Random 2: "+ran2);
+						ran2 = ran2>=0 && ran2<5 && !(ran1==3&&ran2==1)? ran2: ran2-1;
+						logger.info("Random 1: "+ran1);						
 						do {
-							if(ran2!=ran1) {
+							if(!listRan.contains(ran2)) {
 								User userMem = users.get(ran2);
-								member.setUser(userMem);			
+								member.setUser(userMem);
+								listRan.add(ran2);
 //								logger.info("Group member "+ userMem.getUsername());
 							}else {
 								ran2 = (int) Math.round(Math.random()*users.size());
+								ran2 = ran1==3&&ran2==1?  (int) Math.round(Math.random()*users.size()) : ran2;
 							}
-						}while(ran2==ran1);
+							logger.info("Random 2: "+ran2);
+						}while(listRan.contains(ran2));
 						if(member.getUser()!=null) {
 							member.setRole(EGroupRole.MEMBER);
 							memRep.save(member);				
@@ -219,19 +228,21 @@ public class DatabaseSeeder {
 		if(posts.isEmpty()) {
 			List<User> users = userRep.findAll();
 			List<Post> listPo = Arrays.asList(
-					new Post("Demo 1 Post of User 0",users.get(0) , LocalDateTime.now().minusDays(1)),
-					new Post("Demo 2 Post of User 0 ",users.get(0) , LocalDateTime.now()),
-					new Post("Demo 3 Post of User 1",users.get(1) , LocalDateTime.now().minusDays(2)),
-					new Post("Demo 4 Post of User 1",users.get(1) , LocalDateTime.now()),
-					new Post("Demo 5 Post of User 2",users.get(2) , LocalDateTime.now().minusDays(3)),
-					new Post("Demo 6 Post of User 2",users.get(2) , LocalDateTime.now().minusDays(1)),
-					new Post("Demo 7 Post of User 3",users.get(3) , LocalDateTime.now().minusDays(1)),
-					new Post("Demo 8 Post of User 3",users.get(3) , LocalDateTime.now().minusHours(3)),
-					new Post("Demo 9 Post of User 4",users.get(4) , LocalDateTime.now()),
-					new Post("Demo 10 Post of User 4",users.get(4) , LocalDateTime.now())
+					new Post("Demo 1 Post of User 1",users.get(0) , LocalDateTime.now().minusDays(1),ESettingType.PUBLIC),
+					new Post("Demo 2 Post of User 1 ",users.get(0) , LocalDateTime.now(),ESettingType.FOR_FRIEND),
+					new Post("Demo 3 Post of User 2",users.get(1) , LocalDateTime.now().minusDays(2),ESettingType.HIDDEN),
+					new Post("Demo 4 Post of User 2",users.get(1) , LocalDateTime.now(),ESettingType.FOR_FRIEND),
+					new Post("Demo 5 Post of User 3",users.get(2) , LocalDateTime.now().minusDays(3),ESettingType.PUBLIC),
+					new Post("Demo 6 Post of User 3",users.get(2) , LocalDateTime.now().minusDays(1),ESettingType.PUBLIC),
+					new Post("Demo 7 Post of User 4",users.get(3) , LocalDateTime.now().minusDays(1),ESettingType.FOR_FRIEND),
+					new Post("Demo 8 Post of User 4",users.get(3) , LocalDateTime.now().minusHours(3),ESettingType.PUBLIC),
+					new Post("Demo 9 Post of User 5",users.get(4) , LocalDateTime.now(),ESettingType.PUBLIC),
+					new Post("Demo 10 Post of User 5",users.get(4) , LocalDateTime.now(),ESettingType.FOR_FRIEND)
 					);
 			for (Iterator<Post> iterator = listPo.iterator(); iterator.hasNext();) {
 				Post post = (Post) iterator.next();
+				post.setColor("inherit") ;
+				post.setBackground_color("inherit");
 				postRep.save(post);
 				logger.info("Saved Post.");
 			}
@@ -243,8 +254,9 @@ public class DatabaseSeeder {
 					GroupMember groupMember = (GroupMember) iterator2.next();
 					User member = groupMember.getUser();
 					int randomDay=(int) Math.round(Math.random()+5);
-					Post postFromMem = new Post("Demo post in group "+group.getGroupname()+" from user "+member.getUsername(),member, LocalDateTime.now().minusDays(randomDay));
-					postFromMem.setGroup(group);
+					Post postFromMem = new Post("Demo post in group "+group.getGroupname()+" from user "+member.getUsername(),member, LocalDateTime.now().minusDays(randomDay),group);
+					postFromMem.setColor("inherit") ;
+					postFromMem.setBackground_color("inherit");
 					postRep.save(postFromMem);
 					logger.info("Saved Post to Group "+group.getGroupname());
 				}

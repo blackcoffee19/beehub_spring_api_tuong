@@ -31,18 +31,18 @@ public class Report {
 	
 	@Null
 	@ManyToOne
-	@JoinColumn(name= "receiver_id")
-	private User receiver;
+	@JoinColumn(name= "target_user_id")
+	private User target_user;
 	
 	@Null
 	@ManyToOne
-	@JoinColumn(name= "group_id")
-	private Group group_receiver;
+	@JoinColumn(name= "target_group_id")
+	private Group target_group;
 	
 	@Null
 	@ManyToOne
-	@JoinColumn(name= "post_id")
-	private Post post_report;
+	@JoinColumn(name= "target_post_id")
+	private Post target_post;
 	
 	@ManyToOne
 	@JoinColumn(name= "type_id")
