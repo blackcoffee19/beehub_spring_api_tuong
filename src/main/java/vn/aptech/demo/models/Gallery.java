@@ -44,6 +44,13 @@ public class Gallery {
 	@Nullable
 	@OneToOne(mappedBy = "background")
 	private User background;
-	@NotBlank
+
 	private LocalDateTime create_at;
+	
+	public Gallery(User user, Post post, String media, String media_type) {
+		this.user = user;
+		this.post = post;
+		this.media = media;
+		this.media_type = media_type;
+	}
 }

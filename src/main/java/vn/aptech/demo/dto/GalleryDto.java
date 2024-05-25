@@ -1,5 +1,7 @@
 package vn.aptech.demo.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ public class GalleryDto {
 	private Long post_id;
 	private String media;
 	private String media_type;
+	private LocalDateTime create_at;
 	public GalleryDto(
 			Long user_id,
 			String media,

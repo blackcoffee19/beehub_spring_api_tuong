@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import vn.aptech.demo.dto.GalleryDto;
 import vn.aptech.demo.dto.PostDto;
 import vn.aptech.demo.models.ESettingType;
+import vn.aptech.demo.repository.GalleryRepository;
 import vn.aptech.demo.repository.PostRepository;
 import vn.aptech.demo.service.IPostService;
 @Service
@@ -16,13 +17,14 @@ public class PostService implements IPostService {
 	@Autowired
 	private PostRepository postRep;
 	
+	
 	@Override
 	public List<PostDto> findByUserId(Long id) {
 		List<PostDto> listPost = new LinkedList<PostDto>();
 		postRep.findByUserId(id).forEach((post)-> {
 			List<GalleryDto> media = new LinkedList<GalleryDto>();
 			post.getMedia().forEach((m)-> {
-				media.add(new GalleryDto(m.getUser().getId(), m.getMedia(), m.getMedia_type()));
+				media.add(new GalleryDto(m.getId(),m.getUser().getId(), m.getPost().getId(),m.getMedia(), m.getMedia_type(), m.getCreate_at()));
 			});
 			listPost.add(new PostDto(
 								post.getId(), 
@@ -48,7 +50,7 @@ public class PostService implements IPostService {
 		postRep.randomNewestPostFromGroupAndFriend(id,limit).forEach((post)->{
 			List<GalleryDto> media = new LinkedList<GalleryDto>();
 			post.getMedia().forEach((m)-> {
-				media.add(new GalleryDto(m.getUser().getId(), m.getMedia(), m.getMedia_type()));
+				media.add(new GalleryDto(m.getId(),m.getUser().getId(), m.getPost().getId(),m.getMedia(), m.getMedia_type(), m.getCreate_at()));
 			});
 			listPost.add( new PostDto(
 					post.getId(), 
@@ -73,7 +75,7 @@ public class PostService implements IPostService {
 		postRep.searchPublicPostsContain(search, id).forEach((post)->{
 			List<GalleryDto> media = new LinkedList<GalleryDto>();
 			post.getMedia().forEach((m)-> {
-				media.add(new GalleryDto(m.getUser().getId(), m.getMedia(), m.getMedia_type()));
+				media.add(new GalleryDto(m.getId(),m.getUser().getId(), m.getPost().getId(),m.getMedia(), m.getMedia_type(), m.getCreate_at()));
 			});
 			listPost.add( new PostDto(
 					post.getId(), 
@@ -93,7 +95,7 @@ public class PostService implements IPostService {
 		postRep.searchPostsInGroupJoinedContain(search, id).forEach((post)->{
 			List<GalleryDto> media = new LinkedList<GalleryDto>();
 			post.getMedia().forEach((m)-> {
-				media.add(new GalleryDto(m.getUser().getId(), m.getMedia(), m.getMedia_type()));
+				media.add(new GalleryDto(m.getId(),m.getUser().getId(), m.getPost().getId(),m.getMedia(), m.getMedia_type(), m.getCreate_at()));
 			});
 			listPost.add( new PostDto(
 					post.getId(), 
@@ -112,5 +114,5 @@ public class PostService implements IPostService {
 					));});
 		return listPost;
 	}
-
+	
 }

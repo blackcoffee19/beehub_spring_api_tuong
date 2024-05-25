@@ -20,6 +20,7 @@ import vn.aptech.demo.models.EGroupRole;
 import vn.aptech.demo.models.ERelationshipType;
 import vn.aptech.demo.models.ERole;
 import vn.aptech.demo.models.ESettingType;
+import vn.aptech.demo.models.Gallery;
 import vn.aptech.demo.models.Group;
 import vn.aptech.demo.models.GroupMember;
 import vn.aptech.demo.models.Post;
@@ -29,6 +30,7 @@ import vn.aptech.demo.models.Requirement;
 import vn.aptech.demo.models.Role;
 import vn.aptech.demo.models.User;
 import vn.aptech.demo.models.UserSetting;
+import vn.aptech.demo.repository.GalleryRepository;
 import vn.aptech.demo.repository.GroupMemberRepository;
 import vn.aptech.demo.repository.GroupRepository;
 import vn.aptech.demo.repository.PostRepository;
@@ -51,6 +53,7 @@ public class DatabaseSeeder {
 	private ReportTypeRepository reportTypeRep;
 	private PostRepository postRep;
 	private RequirementRepository requirementRep;
+	private GalleryRepository galleryRep;
 	public DatabaseSeeder(
 			UserRepository urep,
 			GroupRepository grep,
@@ -60,7 +63,8 @@ public class DatabaseSeeder {
 			RelationshipUsersRepository relationshipsRep,
 			ReportTypeRepository reportTypeRep,
 			PostRepository postRep,
-			RequirementRepository requirementRep
+			RequirementRepository requirementRep,
+			GalleryRepository galleryRep
 			) {
 		this.groupRep = grep;
 		this.userRep = urep;
@@ -71,6 +75,7 @@ public class DatabaseSeeder {
 		this.reportTypeRep = reportTypeRep;
 		this.postRep = postRep;
 		this.requirementRep = requirementRep;
+		this.galleryRep = galleryRep;
 	}
 //	@EventListener
 //	public void seed(ContextRefreshedEvent event) {
@@ -82,6 +87,7 @@ public class DatabaseSeeder {
 //        seederReportType();
 //        seederPosts();
 //        seederRequirements();
+//
 //    }
 	private void seederRole() {
 		 List<Role> roles = roleRep.findAll();
@@ -279,6 +285,25 @@ public class DatabaseSeeder {
 					logger.info("Saved Post to Group "+group.getGroupname());
 				}
 			}
+
+			List<Post> listposts = Arrays.asList(
+					new Post("Post with image", users.get(0), LocalDateTime.now(), ESettingType.PUBLIC),
+					new Post("My Image", users.get(1), LocalDateTime.now(), ESettingType.FOR_FRIEND)
+					);
+			for (Iterator<Post> iterator = listposts.iterator(); iterator.hasNext();) {
+				Post post = (Post) iterator.next();
+				postRep.save(post);
+			}
+			//pic_rogue_2_1
+			List<Gallery> galleries = Arrays.asList(
+						new Gallery(users.get(0), postRep.findById((long) postRep.count()-1).get(), "pic1.png", "image"),
+						new Gallery(users.get(1), postRep.findById((long) postRep.count()).get(), "pic2.png", "image")
+					);
+			for (Iterator<Gallery> iterator = galleries.iterator(); iterator.hasNext();) {
+				Gallery gallery = (Gallery) iterator.next();
+				gallery.setCreate_at(LocalDateTime.now());
+				galleryRep.save(gallery);
+			}
 		}else {
 			logger.trace("Seeding Post is not required");
 		}
@@ -308,8 +333,5 @@ public class DatabaseSeeder {
 			logger.trace("Requirement is not required seeder");
 		}
 	
-	}
-	private void seederPostMedia() {
-		
 	}
 }

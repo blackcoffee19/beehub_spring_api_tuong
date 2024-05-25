@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.aptech.demo.dto.GalleryDto;
 import vn.aptech.demo.dto.GroupDto;
 import vn.aptech.demo.dto.GroupMemberDto;
 import vn.aptech.demo.dto.PostDto;
@@ -22,6 +23,7 @@ import vn.aptech.demo.dto.UserSettingDto;
 import vn.aptech.demo.models.ERelationshipType;
 
 import vn.aptech.demo.models.User;
+import vn.aptech.demo.repository.GalleryRepository;
 import vn.aptech.demo.repository.RelationshipUsersRepository;
 import vn.aptech.demo.repository.UserRepository;
 import vn.aptech.demo.seeders.DatabaseSeeder;
@@ -35,6 +37,8 @@ public class UserService implements IUserService {
 	private Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
 	@Autowired
 	private UserRepository userRep;
+	@Autowired
+	private GalleryRepository galleryRep;
 	@Autowired
 	private RelationshipUsersRepository relationshipRep;
 	@Autowired 
@@ -223,7 +227,10 @@ public class UserService implements IUserService {
 			List<UserSettingDto> userSetting = userSettingSer.allSettingOfUser(user.getId());
 			List<UserDto> relationshipList = getRelationship(user.getId());
 			List<PostDto> posts = postSer.findByUserId(user.getId());
-			
+			List<GalleryDto> galleries = new LinkedList<GalleryDto>();
+			galleryRep.findByUser_id(user.getId()).forEach((gallery)->{
+				galleries.add(new GalleryDto(gallery.getId(), gallery.getUser().getId(),gallery.getPost().getId(), gallery.getMedia(), gallery.getMedia_type(), gallery.getCreate_at()));
+			});
 			return new ProfileDto(
 					user.getId(),
 					user.getUsername(),
@@ -242,7 +249,8 @@ public class UserService implements IUserService {
 					grList,
 					userSetting,
 					relationshipList,
-					posts
+					posts,
+					galleries
 					);
 		});
 		

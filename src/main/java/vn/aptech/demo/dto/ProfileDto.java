@@ -30,5 +30,6 @@ public class ProfileDto {
 	private List<UserSettingDto> user_settings;
 	private List<UserDto> relationships;
 	private List<PostDto> posts;
+	private List<GalleryDto> galleries;
 		
 }
