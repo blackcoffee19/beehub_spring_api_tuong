@@ -1,7 +1,9 @@
 package vn.aptech.demo.service.impl;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -71,7 +73,10 @@ public class UserService implements IUserService {
 					user.getGender(), 
 					user.getImage()!=null?user.getImage().getMedia():null,
 					user.getImage()!=null?user.getImage().getMedia_type():null,
-					ERelationshipType.FRIEND.toString()));
+					ERelationshipType.FRIEND.toString(),
+					user.getGroup_joined().size(),
+					findAllFriends(user.getId()).size()
+					));
 		});
 		userRep.findRelationship(id, ERelationshipType.BLOCKED.toString()).forEach((user)->{
 			list.add(new UserDto(
@@ -107,7 +112,96 @@ public class UserService implements IUserService {
 		userRep.findRelationship(id,ERelationshipType.FRIEND.toString()).forEach(e-> list.add(toDto(e)));
 		return list;
 	}
-	public List<GroupMemberDto> getGroupJoined(Long id){
+	@Override
+	public Map<String, List<Object>> getGroupJoinedAndFriends(Long id){
+		Map<String, List<Object>> res= new HashMap<String, List<Object>>(); 
+		List<Object> list = new LinkedList<Object>();
+		userRep.findById(id).get().getGroup_joined().forEach((gm)-> {
+			GroupMemberDto grouM= new GroupMemberDto(
+					gm.getId(), 
+					gm.getUser().getId(),
+					gm.getGroup().getId(),
+					gm.getGroup().getGroupname(),
+					gm.getGroup().getImage_group()!=null?gm.getGroup().getImage_group().getMedia():null,
+					true, 
+					gm.getRole().toString());
+			list.add(grouM);
+		});
+		List<Object> listFriend = new LinkedList<Object>();
+		userRep.findRelationship(id,ERelationshipType.FRIEND.toString()).forEach(e-> listFriend.add(toDto(e)));
+		res.put("groups", list);
+		res.put("friends", listFriend);
+		return res;
+	}
+	@Override
+	public Map<String, List<UserDto>> getPeople(Long id) {
+		Map<String, List<UserDto>> getMap = new HashMap<String, List<UserDto>>();
+		List<UserDto> listPeople = new LinkedList<UserDto>();
+		try {
+			userRep.findPeopleSameGroup(id).forEach((user)-> {
+				String relationship = relationshipRep.getRelationship(id, user.getId()).isPresent()?relationshipRep.getRelationship(id, user.getId()).get().getType().toString():null;
+				listPeople.add(new UserDto(
+						user.getId(), 
+						user.getUsername(), 
+						user.getFullname(), 
+						user.getGender(),
+						user.getImage()!=null?user.getImage().getMedia():null, 
+						user.getImage()!=null?user.getImage().getMedia_type():null, 
+						relationship, user.getGroup_joined().size(),
+						findAllFriends(user.getId()).size())
+						);
+				});
+		} catch (Exception e2) {
+			logger.error(e2.getMessage());
+		} finally {
+			getMap.put("people", listPeople);
+		}
+
+		List<UserDto> listFriends = new LinkedList<UserDto>();
+		try {
+			userRep.findRelationship(id,ERelationshipType.FRIEND.toString()).forEach((user)-> {
+				String relationship = relationshipRep.getRelationship(id, user.getId()).isPresent()?relationshipRep.getRelationship(id, user.getId()).get().getType().toString():null;
+				listFriends.add(new UserDto(
+						user.getId(), 
+						user.getUsername(), 
+						user.getFullname(), 
+						user.getGender(),
+						user.getImage()!=null?user.getImage().getMedia():null, 
+						user.getImage()!=null?user.getImage().getMedia_type():null, 
+						relationship, user.getGroup_joined().size(),
+						findAllFriends(user.getId()).size())
+						);
+			});
+		} catch (Exception e2) {
+			logger.error(e2.getMessage());
+		} finally {
+			getMap.put("friends", listFriends);			
+		}
+		
+		List<UserDto> listSendRequest = new LinkedList<UserDto>();
+		try {
+			userRep.findPeopleUserSendAddFriend(id).forEach((user)->{
+				String relationship = relationshipRep.getRelationship(id, user.getId()).isPresent()?relationshipRep.getRelationship(id, user.getId()).get().getType().toString():null;
+				listSendRequest.add(new UserDto(
+						user.getId(), 
+						user.getUsername(), 
+						user.getFullname(), 
+						user.getGender(),
+						user.getImage()!=null?user.getImage().getMedia():null, 
+						user.getImage()!=null?user.getImage().getMedia_type():null, 
+						relationship, user.getGroup_joined().size(),
+						findAllFriends(user.getId()).size())
+						);
+			});			
+		} catch (Exception e2) {
+			logger.error(e2.getMessage());
+		}finally {
+			
+			getMap.put("addfriend", listSendRequest);
+		}
+		return getMap;
+	}
+	public List<GroupMemberDto> getGroupJoined (Long id){
 		List<GroupMemberDto> list = new LinkedList<GroupMemberDto>();
 		userRep.findById(id).get().getGroup_joined().forEach((gm)-> {
 			GroupMemberDto grouM= new GroupMemberDto(
@@ -122,7 +216,6 @@ public class UserService implements IUserService {
 		});
 		return list;
 	}
-	
 	@Override
 	public Optional<ProfileDto> getProfile(String username) {
 		return userRep.findByUsername(username).map((user)-> {
@@ -185,4 +278,7 @@ public class UserService implements IUserService {
 		searchDto.setGroups(listGroups);
 		return searchDto;
 	}
+	
+	
+	
 }

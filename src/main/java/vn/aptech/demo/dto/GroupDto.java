@@ -2,6 +2,7 @@ package vn.aptech.demo.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class GroupDto {
 	private String image_group;
 	private String background_group;
 	private boolean joined;
+	@Nullable
+	private String member_role;
 	private int member_count;
 	public GroupDto(
 			String groupname,

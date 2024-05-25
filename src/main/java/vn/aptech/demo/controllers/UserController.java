@@ -3,6 +3,7 @@ package vn.aptech.demo.controllers;
 
 import org.springframework.http.HttpHeaders;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,11 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.http.HttpStatus;
 import vn.aptech.demo.dto.FileInfo;
+import vn.aptech.demo.dto.GroupDto;
+import vn.aptech.demo.dto.GroupMemberDto;
 import vn.aptech.demo.dto.PostDto;
 import vn.aptech.demo.dto.ProfileDto;
 import vn.aptech.demo.dto.SearchingDto;
 import vn.aptech.demo.dto.UserDto;
 import vn.aptech.demo.service.IFilesStorageService;
+import vn.aptech.demo.service.IGroupService;
 import vn.aptech.demo.service.IPostService;
 import vn.aptech.demo.service.IUserService;
 
@@ -34,6 +38,8 @@ public class UserController {
 	private IUserService userService;
 	@Autowired
 	private IPostService postService;
+	@Autowired
+	private IGroupService groupService;
 	@Autowired
 	private IFilesStorageService storageService;
 	
@@ -53,6 +59,10 @@ public class UserController {
 	private List<UserDto> getFriends(@PathVariable Long id){
 		return userService.findAllFriends(id);
 	}
+	@GetMapping(path="/groups_friends/{id}")
+	private Map<String, List<Object>> getGroupsAndFriends(@PathVariable Long id){
+		return userService.getGroupJoinedAndFriends(id);
+	}
 	@GetMapping(path = "/post/{id}")
 	private List<PostDto> getPosts(@PathVariable Long id){
 		return postService.findByUserId(id);
@@ -60,6 +70,14 @@ public class UserController {
 	@GetMapping(path = "/homepage/{id}")
 	private List<PostDto> getFriendPost(@PathVariable Long id,@RequestParam(defaultValue = "5") int limit){
 		return postService.newestPostsForUser(id, limit);
+	}
+	@GetMapping(path = "/peoplepage/{id}")
+	private Map<String, List<UserDto>> getPeople(@PathVariable Long id ){
+		return userService.getPeople(id);
+	}
+	@GetMapping(path = "/listgroup_page/{id}")
+	private Map<String, List<GroupDto>> getListGroups(@PathVariable Long id){
+		return groupService.getListGroup(id);
 	}
 	@GetMapping(path = "/user/{id}/search_all")
 	private SearchingDto getSearchString(@PathVariable Long id,@RequestParam(required = true) String search){
