@@ -10,19 +10,28 @@ import lombok.NoArgsConstructor;
 public class GroupMemberDto {
 	private int id;
 	private Long user_id;
+	private String username;
+	private String user_image;
+	private String user_gender;
+	private String user_fullname;
 	private Long group_id;
 	private String group_name;
 	private String group_image;
 	private boolean joined;
 	private String role;
+	private String relationship;
 	public GroupMemberDto(
-			Long user_id,
 			Long group_id,
+			String group_name,
+			String group_image,
 			String role
 			) {
 		this.group_id = group_id;
-		this.user_id = user_id;
+		this.group_name = group_name;
 		this.role = role;
 	};
-
+	public GroupMemberDto (int id,
+			String username) {
+		
+	}
 }

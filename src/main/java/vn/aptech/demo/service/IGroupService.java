@@ -2,10 +2,13 @@ package vn.aptech.demo.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import vn.aptech.demo.dto.GroupDto;
 
 public interface IGroupService {
-	List<GroupDto> searchNameGroup(String search, Long id_user);
+	public List<GroupDto> searchNameGroup(String search, Long id_user);
 	public Map<String, List<GroupDto>> getListGroup(Long id);
+	public Optional<GroupDto> getGroup(Long id_user, Long id_group);
+	public List<Object> getGroupUserJoined (Long id);
 }

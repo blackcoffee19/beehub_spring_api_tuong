@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.http.HttpStatus;
 import vn.aptech.demo.dto.FileInfo;
 import vn.aptech.demo.dto.GroupDto;
-import vn.aptech.demo.dto.GroupMemberDto;
 import vn.aptech.demo.dto.PostDto;
 import vn.aptech.demo.dto.ProfileDto;
 import vn.aptech.demo.dto.SearchingDto;
@@ -83,7 +82,14 @@ public class UserController {
 	private SearchingDto getSearchString(@PathVariable Long id,@RequestParam(required = true) String search){
 		return userService.getSearch(id,search);
 	}
-	
+	@GetMapping (path="/user/{id_user}/get-group/{id_group}")
+	private Optional<GroupDto> getGroup(@PathVariable Long id_user, @PathVariable Long id_group) {
+		return groupService.getGroup(id_user, id_group);
+	}
+	@GetMapping (path="/user/{id_user}/group/{id_group}/posts")
+	private List<PostDto> getPostInGroup(@PathVariable Long id_user, @PathVariable Long id_group){
+		return postService.newestPostInGroup(id_group, id_user, 8);
+	}
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> getFile(@PathVariable String filename) {

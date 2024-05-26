@@ -26,7 +26,7 @@ public class ProfileDto {
 	private boolean is_active;
 	private LocalDateTime active_at;
 	private LocalDateTime create_at;
-	private List<GroupMemberDto> group_joined;
+	private List<Object> group_joined;
 	private List<UserSettingDto> user_settings;
 	private List<UserDto> relationships;
 	private List<PostDto> posts;

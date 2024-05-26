@@ -1,6 +1,7 @@
 package vn.aptech.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,16 @@ public class GroupDto {
 	@Nullable
 	private String member_role;
 	private int member_count;
+	private int post_count;
+	@Nullable
+	private List<RequirementDto> requirements;
+	@Nullable
+	private List<GroupMemberDto> group_members;
+	@Nullable
+	private List<GroupMediaDto> group_medias;
+	@Nullable
+	private List<ReportDto> reports_of_group;
+	
 	public GroupDto(
 			String groupname,
 			String description	
@@ -48,5 +59,44 @@ public class GroupDto {
 		this.joined = joined;
 		
 
+	}
+	public GroupDto(Long id, 
+			String groupname,
+			boolean public_group,
+			String description,
+			boolean active,
+			LocalDateTime created_at,
+			String image_group,
+			String background_group,
+			boolean joined,
+			String member_role,
+			int member_count) {
+		this.id = id;
+		this.groupname = groupname;
+		this.public_group = public_group;
+		this.description = description;
+		this.active = active;
+		this.created_at = created_at;
+		this.image_group = image_group;
+		this.background_group = background_group;
+		this.joined =joined;
+		this.member_role = member_role;
+		this.member_count = member_count;
+	}
+	public GroupDto(Long id2, 
+			String groupname2, 
+			boolean public_group2, 
+			String description2, 
+			boolean active2,
+			LocalDateTime created_at2, 
+			String image, String background) {
+		this.id = id2;
+		this.groupname = groupname2;
+		this.public_group = public_group2;
+		this.description = description2;
+		this.active = active2;
+		this.created_at =created_at2;
+		this.image_group = image;
+		this.background_group = background;
 	}
 }

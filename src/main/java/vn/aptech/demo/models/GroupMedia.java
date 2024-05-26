@@ -49,5 +49,5 @@ public class GroupMedia {
 	@Nullable
 	@OneToOne(mappedBy = "background_group")
 	private Group background_group;
-	
+
 }

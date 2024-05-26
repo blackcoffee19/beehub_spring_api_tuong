@@ -71,4 +71,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			+ " ORDER BY p.create_at DESC ", nativeQuery = true)
 	List<Post> searchPostsInGroupJoinedContain( @Param("search") String search, @Param("id") Long id);
 	
+	@Query(value="SELECT COUNT(*) FROM posts p WHERE p.group_id=?1", nativeQuery = true)
+	Integer countPostsInGroup(Long id);
+	
+	//Get the newest Posts In group except user blocked
+	@Query(value = "SELECT p.* FROM posts p"
+			+ " WHERE p.user_id NOT IN ( SELECT ur.user1_id FROM relationship_users ur WHERE ur.user2_id = :user_id AND ur.type = 'BLOCKED') "
+			+ " AND p.user_id NOT IN (SELECT ur.user2_id FROM relationship_users ur WHERE ur.user1_id = :user_id AND ur.type = 'BLOCKED')"
+			+ " AND p.group_id = :group_id"
+			+ " ORDER BY p.create_at DESC"
+			+ " LIMIT :limit", nativeQuery = true)
+	List<Post> randomNewestPostFromGroup(@Param("group_id") Long id_group,@Param("user_id") Long id_user,@Param("limit") Integer limit);
 }

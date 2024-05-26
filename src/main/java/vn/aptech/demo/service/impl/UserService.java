@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import vn.aptech.demo.dto.GalleryDto;
 import vn.aptech.demo.dto.GroupDto;
-import vn.aptech.demo.dto.GroupMemberDto;
 import vn.aptech.demo.dto.PostDto;
 import vn.aptech.demo.dto.ProfileDto;
 import vn.aptech.demo.dto.SearchingDto;
@@ -46,7 +45,7 @@ public class UserService implements IUserService {
 	@Autowired
 	private IUserSettingService userSettingSer;
 	@Autowired
-	private IGroupService groupRep;
+	private IGroupService groupSer;
 	@Autowired 
 	private ModelMapper mapper;
 	private UserDto toDto(User user) {
@@ -119,21 +118,10 @@ public class UserService implements IUserService {
 	@Override
 	public Map<String, List<Object>> getGroupJoinedAndFriends(Long id){
 		Map<String, List<Object>> res= new HashMap<String, List<Object>>(); 
-		List<Object> list = new LinkedList<Object>();
-		userRep.findById(id).get().getGroup_joined().forEach((gm)-> {
-			GroupMemberDto grouM= new GroupMemberDto(
-					gm.getId(), 
-					gm.getUser().getId(),
-					gm.getGroup().getId(),
-					gm.getGroup().getGroupname(),
-					gm.getGroup().getImage_group()!=null?gm.getGroup().getImage_group().getMedia():null,
-					true, 
-					gm.getRole().toString());
-			list.add(grouM);
-		});
+		List<Object> listGroup =  groupSer.getGroupUserJoined(id);
 		List<Object> listFriend = new LinkedList<Object>();
 		userRep.findRelationship(id,ERelationshipType.FRIEND.toString()).forEach(e-> listFriend.add(toDto(e)));
-		res.put("groups", list);
+		res.put("groups", listGroup);
 		res.put("friends", listFriend);
 		return res;
 	}
@@ -205,25 +193,11 @@ public class UserService implements IUserService {
 		}
 		return getMap;
 	}
-	public List<GroupMemberDto> getGroupJoined (Long id){
-		List<GroupMemberDto> list = new LinkedList<GroupMemberDto>();
-		userRep.findById(id).get().getGroup_joined().forEach((gm)-> {
-			GroupMemberDto grouM= new GroupMemberDto(
-					gm.getId(), 
-					gm.getUser().getId(),
-					gm.getGroup().getId(),
-					gm.getGroup().getGroupname(),
-					gm.getGroup().getImage_group()!=null?gm.getGroup().getImage_group().getMedia():null,
-					true, 
-					gm.getRole().toString());
-			list.add(grouM);
-		});
-		return list;
-	}
+	
 	@Override
 	public Optional<ProfileDto> getProfile(String username) {
 		return userRep.findByUsername(username).map((user)-> {
-			List<GroupMemberDto> grList = getGroupJoined(user.getId());
+			List<Object> grList = groupSer.getGroupUserJoined(user.getId());
 			List<UserSettingDto> userSetting = userSettingSer.allSettingOfUser(user.getId());
 			List<UserDto> relationshipList = getRelationship(user.getId());
 			List<PostDto> posts = postSer.findByUserId(user.getId());
@@ -279,7 +253,7 @@ public class UserService implements IUserService {
 			}
 		});
 		//Search groups
-		List<GroupDto> listGroups = groupRep.searchNameGroup(search, id);
+		List<GroupDto> listGroups = groupSer.searchNameGroup(search, id);
 		SearchingDto searchDto = new SearchingDto();
 		searchDto.setPosts(listPosts);
 		searchDto.setPeople(listPeople);

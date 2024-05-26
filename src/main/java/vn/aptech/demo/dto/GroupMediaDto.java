@@ -13,6 +13,8 @@ public class GroupMediaDto {
 	private String media;
 	private String media_type;
 	private LocalDateTime create_at;
-	private Long user_id;
+	private String username;
+	private String fullname;
 	private Long group_id;
+	private Long post_id;
 }

@@ -21,6 +21,7 @@ public class PostDto {
 	private Long group_id;
 	private LocalDateTime create_at;
 	private String user_fullname;
+	private String user_username;
 	@Nullable
 	private String user_image;
 	private String user_gender;
@@ -30,7 +31,7 @@ public class PostDto {
 	private boolean public_group;
 	@Nullable
 	private String group_image;
-	private String setting_post;
+	private String setting_type;
 	
 	public PostDto(
 			String text,
@@ -59,10 +60,15 @@ public class PostDto {
 		this.user_fullname = user_fullname;
 		this.user_image = user_image;
 		this.user_gender = user_gender;
-		this.setting_post=setting_type;
+		this.setting_type=setting_type;
 	}
 	@Override
 	public String toString() {
 		return "Post "+this.id+": "+this.text+"\tMedia: "+this.media;
 	}
+//	public PostDto(Long id2, String text2, List<GalleryDto> media2, Long id3, Long long1, LocalDateTime create_at2,
+//			String fullname, String username, Object object, String gender, Object object2, boolean b, Object object3,
+//			Object object4, UserSettingDto userSettingToDto) {
+//		// TODO Auto-generated constructor stub
+//	}
 }
