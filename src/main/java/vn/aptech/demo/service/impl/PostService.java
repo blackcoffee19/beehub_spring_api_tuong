@@ -158,5 +158,41 @@ public class PostService implements IPostService {
 		}
 		return list;
 	}
+	@Override
+	public List<PostDto> getPostsForUser(Long id, int page, int limit) {
+		List<PostDto> listPost = new LinkedList<PostDto>();
+		int firsIndex = page*limit <getAllPostForUser(id).size() ?page* limit :-1;
+		int lastIndex = (page*limit) +5 <=getAllPostForUser(id).size()?(page*limit) +5 :getAllPostForUser(id).size();
+		if(firsIndex>=0) {
+			listPost = getAllPostForUser(id).subList(firsIndex, lastIndex);			
+		}
+		return listPost;
+	}
+	@Override
+	public List<PostDto> getAllPostForUser(Long id) {
+		List<PostDto> listPost = new LinkedList<PostDto>();
+		postRep.getAllPostsFromGroupAndFriend(id).forEach((post)->{
+			List<GalleryDto> media = new LinkedList<GalleryDto>();
+			post.getMedia().forEach((m)-> {
+				media.add(new GalleryDto(m.getId(),m.getUser().getId(), m.getPost().getId(),m.getMedia(), m.getMedia_type(), m.getCreate_at()));
+			});
+			listPost.add( new PostDto(
+					post.getId(), 
+					post.getText(), 
+					media,
+					post.getUser().getId(),
+					post.getGroup()!=null? post.getGroup().getId(): null, 
+					post.getCreate_at(),
+					post.getUser().getFullname(),
+					post.getUser().getUsername(),
+					post.getUser().getImage()!=null? post.getUser().getImage().getMedia():null,
+					post.getUser().getGender(),
+					post.getGroup()!=null?post.getGroup().getGroupname():null,
+					post.getGroup()!=null?post.getGroup().isPublic_group():false,
+					post.getGroup()!=null && post.getGroup().getImage_group()!=null?post.getGroup().getImage_group().getMedia():null,
+					post.getUser_setting()!=null?post.getUser_setting().getSetting_type().toString():ESettingType.PUBLIC.toString()
+					));});
+		return listPost;
+	}
 	
 }

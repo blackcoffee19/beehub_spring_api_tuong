@@ -77,18 +77,18 @@ public class DatabaseSeeder {
 		this.requirementRep = requirementRep;
 		this.galleryRep = galleryRep;
 	}
-//	@EventListener
-//	public void seed(ContextRefreshedEvent event) {
-//        seederRole();
-//        seederUser();
-//        seederGroup();
-//        seederGroupMember();
-//        seederRelationshipUser();
-//        seederReportType();
-//        seederPosts();
-//        seederRequirements();
-//
-//    }
+	@EventListener
+	public void seed(ContextRefreshedEvent event) {
+        seederRole();
+        seederUser();
+        seederGroup();
+        seederGroupMember();
+        seederRelationshipUser();
+        seederReportType();
+        seederPosts();
+        seederRequirements();
+
+    }
 	private void seederRole() {
 		 List<Role> roles = roleRep.findAll();
 		 if(roles.isEmpty()) {

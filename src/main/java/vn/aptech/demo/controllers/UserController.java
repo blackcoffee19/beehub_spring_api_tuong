@@ -70,6 +70,14 @@ public class UserController {
 	private List<PostDto> getFriendPost(@PathVariable Long id,@RequestParam(defaultValue = "5") int limit){
 		return postService.newestPostsForUser(id, limit);
 	}
+	@GetMapping(path = "/load-posts/{id}")
+	private List<PostDto> allAllPost(@PathVariable Long id,@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "5") int limit){
+		return postService.getPostsForUser(id,page, limit);
+	}
+	@GetMapping(path = "/allposts/{id}")
+	private List<PostDto> allAllPost(@PathVariable Long id){
+		return postService.getAllPostForUser(id);
+	}
 	@GetMapping(path = "/peoplepage/{id}")
 	private Map<String, List<UserDto>> getPeople(@PathVariable Long id ){
 		return userService.getPeople(id);
@@ -88,7 +96,7 @@ public class UserController {
 	}
 	@GetMapping (path="/user/{id_user}/group/{id_group}/posts")
 	private List<PostDto> getPostInGroup(@PathVariable Long id_user, @PathVariable Long id_group){
-		return postService.newestPostInGroup(id_group, id_user, 8);
+		return postService.newestPostInGroup(id_group, id_user, 20);
 	}
 	@GetMapping("/files/{filename:.+}")
 	@ResponseBody
